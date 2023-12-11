@@ -105,7 +105,11 @@ class ImageData:
 
         return size
 
-    def _preprocess_image(image_data: np.ndarray, resize_dim: tuple = (144, 144)) -> np.ndarray:
+    def _preprocess_image(image_data: np.ndarray,
+                          resize_dim: tuple = (144, 144),
+                          kernel_size: tuple = (3,3),
+                          sigma: int = 2
+                          ) -> np.ndarray:
         """
         Preprocesses the image by resizing, converting to grayscale, noise reduction, and histogram equalization.
 
@@ -120,7 +124,7 @@ class ImageData:
         image_resized = cv2.resize(image_data, resize_dim)
 
         # Noise reduction (e.g., Gaussian Blur)
-        image_smoothed = cv2.GaussianBlur(image_resized, (3, 3), 0)
+        image_smoothed = cv2.GaussianBlur(image_resized, kernel_size, sigma)
 
         # Histogram Equalization
         image_equalized = cv2.equalizeHist(image_smoothed)
