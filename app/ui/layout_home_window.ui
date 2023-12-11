@@ -323,5 +323,41 @@ QPushButton:hover {
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>pushButton_for_FeatureAnalysis</sender>
+   <signal>clicked()</signal>
+   <receiver>home_window</receiver>
+   <slot>open_home_window()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>150</x>
+     <y>93</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>251</x>
+     <y>56</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_for_Close</sender>
+   <signal>clicked()</signal>
+   <receiver>home_window</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>657</x>
+     <y>561</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>768</x>
+     <y>514</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>open_home_window()</slot>
+ </slots>
 </ui>

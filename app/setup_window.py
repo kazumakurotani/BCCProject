@@ -17,7 +17,7 @@ class MainWindow(QtWidgets.QMainWindow, layout_home_window.Ui_home_window):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setupUi(self)
-        self.connect_handler_to_main_window_button()
+        # self.connect_handler_to_main_window_button()
 
     def connect_handler_to_main_window_button(self):
         """ボタンと処置関数を接続"""

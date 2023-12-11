@@ -116,6 +116,7 @@ class Ui_home_window(object):
         home_window.setStatusBar(self.statusbar)
 
         self.retranslateUi(home_window)
+        self.pushButton_for_Close.clicked.connect(home_window.close) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(home_window)
 
     def retranslateUi(self, home_window):
