@@ -1,0 +1,4 @@
+activate research_env
+pyuic5 your_ui_file.ui -o output_python_file.py
+
+
