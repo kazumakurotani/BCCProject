@@ -20,7 +20,7 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QPushButton" name="pushButton_2">
+         <widget class="QPushButton" name="pushButton_for_selectDirectory">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -53,7 +53,7 @@ QPushButton:hover {
         <item>
          <widget class="QTreeView" name="treeView_for_selectDirectoly">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -329,7 +329,7 @@ QPushButton:hover {
  <resources/>
  <connections>
   <connection>
-   <sender>pushButton_2</sender>
+   <sender>pushButton_for_selectDirectory</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow_for_ImageAnalysis</receiver>
    <slot>select_directory()</slot>

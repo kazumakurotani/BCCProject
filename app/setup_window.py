@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 import sys
 
 # layout
@@ -7,6 +7,7 @@ from layouts_window import layout_image_analysis_window
 
 # button handler
 from button_handlers import button_handler_home_window
+from button_handlers import button_handler_image_analysis_window
 
 
 class HomeWindow(QtWidgets.QMainWindow, layout_home_window.Ui_home_window):
@@ -20,10 +21,12 @@ class HomeWindow(QtWidgets.QMainWindow, layout_home_window.Ui_home_window):
     def __init__(self):
         super(HomeWindow, self).__init__()
         self.setupUi(self)
-        self.connect_handler_to_main_window_button()
+        self.connect_handler_to_home_window_button()
 
-    def connect_handler_to_main_window_button(self):
-        """ボタンと処置関数を接続"""
+    def connect_handler_to_home_window_button(self):
+        """
+        connect button to handler.
+        """
         self.pushButton_for_FeatureAnalysis.clicked.connect(lambda: button_handler_home_window.open_window_image_analysis(self))
 
 
@@ -38,6 +41,25 @@ class ImageAnalysisWindow(QtWidgets.QMainWindow, layout_image_analysis_window.Ui
     def __init__(self):
         super(ImageAnalysisWindow, self).__init__()
         self.setupUi(self)
+        self.connect_handler_to_image_analysis_window_button()
+        self.connect_file_model_to_treeview()
+
+    def connect_handler_to_image_analysis_window_button(self):
+        """
+        connect button to handler.
+        """
+        self.pushButton_for_selectDirectory.clicked.connect(lambda: button_handler_image_analysis_window.select_directory(self))
+
+    def connect_file_model_to_treeview(self):
+        """
+        connect file model to treeview.
+        """
+        # initialize file model
+        self.fileModel = QtWidgets.QFileSystemModel()
+        self.fileModel.setRootPath(QtCore.QDir.rootPath())
+
+        # QTreeViewにモデルをセット
+        self.treeView_for_selectDirectoly.setModel(self.fileModel)
 
 
 if __name__ == "__main__":
