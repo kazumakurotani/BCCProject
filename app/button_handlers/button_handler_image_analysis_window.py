@@ -26,3 +26,34 @@ def select_directory(ImageAnalysisWindow):
         # ディレクトリが正しく選択されていなければその旨を表示
         message = ("ディレクトリが正しく選択されていません．")
         ImageAnalysisWindow.statusbar.showMessage(message)
+
+def execute(ImageAnalysisWindow):
+
+    # 解析の開始を通知
+    message = "解析中..."
+    ImageAnalysisWindow.statusbar.showMessage(message)
+
+    # Tree Viewの参照先のモデルを作成
+    viewModel = ImageAnalysisWindow.treeView_for_selectDirectoly.model()
+
+    # 参照ディレクトリのパスを取得
+    selected_indexes = ImageAnalysisWindow.treeView_for_selectDirectoly.selectedIndexes()
+
+    if not selected_indexes:
+        message = "ディレクトリが正しく選択されていません."
+        ImageAnalysisWindow.statusbar.showMessage(message)
+        return None
+
+    # 解析ディレクトリのパス取得
+    path_dir = viewModel.filePath(selected_indexes[0])
+    file_list = os.listdir(path_dir)
+
+    # 解析ファイルの読み込み
+    list_path_file = []
+    for f in file_list:
+        path_file = os.path.join(path_dir, f)
+        list_path_file.append(path_file)
+
+    # 解析の終了を通知
+    message = "解析終了"
+    ImageAnalysisWindow.statusbar.showMessage(message)

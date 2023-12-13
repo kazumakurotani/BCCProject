@@ -26,12 +26,13 @@ class ImageData:
 
         # 前処理後の画像
         self.image_preprocessed = self._preprocess_image(self.image_data)
+        self.image_converted = self._convert_color_space(self.image_preprocessed)
 
         # 特徴量
-        self.color_features = self._add_color_features(self.image_preprocessed)
-        self.edge_features = self._add_edge_features(self.image_preprocessed)
-        self.local_features = self._add_local_feature(self.image_preprocessed)
-        self.global_features = self._add_glcm_features(self.image_preprocessed)
+        self.histgrams_features = self._add_histogram_features(self.image_converted)
+        # self.edge_features = self._add_edge_features(self.image_preprocessed)
+        # self.local_features = self._add_local_feature(self.image_preprocessed)
+        # self.glcm_features = self._add_glcm_features(self.image_preprocessed)
 
     def _get_filename(self, filepath: str) -> str:
         """
@@ -120,18 +121,18 @@ class ImageData:
         Returns:
             np.ndarray: The preprocessed image.
         """
-        # Resize the image
+        # リサイズ
         image_resized = cv2.resize(image_data, resize_dim)
 
-        # Noise reduction (e.g., Gaussian Blur)
+        # スムージング (e.g., Gaussian Blur)
         image_smoothed = cv2.GaussianBlur(image_resized, kernel_size, sigma)
 
-        # Histogram Equalization
+        # ヒストグラム平坦化
         image_equalized = cv2.equalizeHist(image_smoothed)
 
         return image_equalized
 
-    def _add_color_features(image_data: np.ndarray) -> Dict[str, np.ndarray]:
+    def _convert_color_space(image_data: np.ndarray) -> Dict[str, np.ndarray]:
         """
         Converts the given image data into various color spaces and stores them in a dictionary.
 
@@ -145,10 +146,10 @@ class ImageData:
         Notes:
             Supported color spaces are GRAY, RGB, HSV, YCrCb, and Lab.
         """
-        # Storage Variables
-        color_features = {}
+        # 格納用変数
+        images_converted = {}
 
-        # Color codes
+        # 指定色空間
         color_spaces = {
             "GRAY": cv2.COLOR_BGR2GRAY,
             "RGB": cv2.COLOR_BGR2RGB,
@@ -157,14 +158,45 @@ class ImageData:
             "Lab": cv2.COLOR_BGR2Lab,
         }
 
-        # Color conversion
+        # 色空間の変換
         for _, color_name in enumerate(color_spaces.keys()):
             color_code = color_spaces[color_name]
             image_converted = cv2.cvtColor(image_data, color_code)
 
-            color_features[color] = image_converted
+            images_converted[color] = image_converted
 
-        return color_features
+        return images_converted
+
+
+    def _add_histogram_features(images_converted: Dict[str, np.ndarray]) -> Dict[str, np.ndarray]:
+        """
+        Calculate histograms for each color space provided in images_converted.
+
+        Args:
+            images_converted (Dict[str, np.ndarray]): Dictionary with keys as color spaces
+                                                    and values as image data in that space.
+
+        Returns:
+            Dict[str, np.ndarray]: Dictionary with keys as color spaces and values as histogram data.
+        """
+        histograms = {}
+
+        # number of bins for histgrams
+        bins = 256
+
+        for color_space, image_data in images_converted.items():
+            if color_space == 'GRAY':  # gray space have a channel
+                hist = cv2.calcHist([image_data], [0], None, [bins], [0, 256])
+                histograms[color_space] = hist
+            else:
+                # if color space is other space, this calculate histgram per channels
+                hist_channels = []
+                for channel in range(image_data.shape[2]):
+                    hist = cv2.calcHist([image_data], [channel], None, [bins], [0, 256])
+                    hist_channels.append(hist)
+                histograms[color_space] = hist_channels
+
+        return histograms
 
     def _add_edge_features(self, image_data: np.ndarray, ksize: int = 3) -> Dict[str, np.ndarray]:
         """

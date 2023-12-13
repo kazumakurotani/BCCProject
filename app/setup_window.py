@@ -49,6 +49,7 @@ class ImageAnalysisWindow(QtWidgets.QMainWindow, layout_image_analysis_window.Ui
         connect button to handler.
         """
         self.pushButton_for_selectDirectory.clicked.connect(lambda: button_handler_image_analysis_window.select_directory(self))
+        self.pushButton_for_executeAnalysis.clicked.connect(lambda: button_handler_image_analysis_window.execute(self))
 
     def connect_file_model_to_treeview(self):
         """
