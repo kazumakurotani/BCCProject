@@ -58,6 +58,9 @@ QPushButton:hover {
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="textElideMode">
+           <enum>Qt::ElideLeft</enum>
+          </property>
          </widget>
         </item>
         <item>
