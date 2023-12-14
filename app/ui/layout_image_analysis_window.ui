@@ -6,17 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
-    <height>800</height>
+    <width>600</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(255, 255, 255);
+background-color: rgb(240, 240, 240);</string>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
@@ -61,6 +65,12 @@ QPushButton:hover {
           <property name="textElideMode">
            <enum>Qt::ElideLeft</enum>
           </property>
+          <property name="indentation">
+           <number>100</number>
+          </property>
+          <attribute name="headerMinimumSectionSize">
+           <number>50</number>
+          </attribute>
          </widget>
         </item>
         <item>
@@ -95,15 +105,11 @@ QPushButton:hover {
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_for_saveResults">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">QPushButton {
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QPushButton" name="pushButton">
+            <property name="styleSheet">
+             <string notr="true">QPushButton {
 	font: 11pt &quot;Segoe UI&quot;;
 	font-weight: bold;
 	color: rgb(0, 0, 0);
@@ -119,11 +125,44 @@ QPushButton:hover {
 	background-color: rgb(255, 255, 255);
 	border: 2px solid rgb(85, 170, 255);
 }</string>
-          </property>
-          <property name="text">
-           <string>save</string>
-          </property>
-         </widget>
+            </property>
+            <property name="text">
+             <string>view</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_for_saveResults">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton {
+	font: 11pt &quot;Segoe UI&quot;;
+	font-weight: bold;
+	color: rgb(0, 0, 0);
+	background-color: rgb(255, 255, 255);
+	border: 1px solid rgb(0, 0, 0);
+	border-radius: 1px;
+}
+
+QPushButton:hover {
+	font: 75 11pt &quot;Segoe UI&quot;;
+	font-weight: bold;
+	color: rgb(85, 170, 255);
+	background-color: rgb(255, 255, 255);
+	border: 2px solid rgb(85, 170, 255);
+}</string>
+            </property>
+            <property name="text">
+             <string>save</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <widget class="QProgressBar" name="progressBar">
@@ -152,90 +191,167 @@ QPushButton:hover {
          <widget class="QTabWidget" name="tabWidget_for_viewDiagram">
           <property name="styleSheet">
            <string notr="true">	background-color: rgb(255, 255, 255);
-	border: 0.5px solid rgb(0, 0, 0);
-	border-radius: 1px;
 </string>
           </property>
           <property name="currentIndex">
-           <number>11</number>
+           <number>0</number>
           </property>
-          <widget class="QWidget" name="tab">
+          <widget class="QWidget" name="tab_1">
            <attribute name="title">
-            <string>Tab 1</string>
+            <string>1</string>
            </attribute>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="0" column="0">
+             <widget class="QGraphicsView" name="graphicsView_tab_1"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QTableView" name="tableView_tab_1"/>
+            </item>
+           </layout>
           </widget>
           <widget class="QWidget" name="tab_2">
            <attribute name="title">
-            <string>Tab 2</string>
+            <string>2</string>
            </attribute>
+           <layout class="QGridLayout" name="gridLayout_3">
+            <item row="0" column="0">
+             <widget class="QGraphicsView" name="graphicsView_tab_2"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QTableView" name="tableView_tab_2"/>
+            </item>
+           </layout>
           </widget>
           <widget class="QWidget" name="tab_3">
            <attribute name="title">
-            <string>ページ</string>
+            <string>3</string>
            </attribute>
+           <layout class="QGridLayout" name="gridLayout_4">
+            <item row="0" column="0">
+             <widget class="QGraphicsView" name="graphicsView_tab_3"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QTableView" name="tableView_tab_3"/>
+            </item>
+           </layout>
           </widget>
           <widget class="QWidget" name="tab_4">
            <attribute name="title">
-            <string>ページ</string>
+            <string>4</string>
            </attribute>
+           <layout class="QGridLayout" name="gridLayout_5">
+            <item row="0" column="0">
+             <widget class="QGraphicsView" name="graphicsView_tab_4"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QTableView" name="tableView_tab_4"/>
+            </item>
+           </layout>
           </widget>
           <widget class="QWidget" name="tab_5">
            <attribute name="title">
-            <string>ページ</string>
+            <string>5</string>
            </attribute>
+           <layout class="QGridLayout" name="gridLayout_6">
+            <item row="0" column="0">
+             <widget class="QGraphicsView" name="graphicsView_tab_5"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QTableView" name="tableView_tab_5"/>
+            </item>
+           </layout>
           </widget>
           <widget class="QWidget" name="tab_6">
            <attribute name="title">
-            <string>ページ</string>
+            <string>6</string>
            </attribute>
+           <layout class="QGridLayout" name="gridLayout_7">
+            <item row="0" column="0">
+             <widget class="QGraphicsView" name="graphicsView_tab_6"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QTableView" name="tableView_tab_6"/>
+            </item>
+           </layout>
           </widget>
           <widget class="QWidget" name="tab_7">
            <attribute name="title">
-            <string>ページ</string>
+            <string>7</string>
            </attribute>
+           <widget class="QTableView" name="tableView_tab_7">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>200</y>
+              <width>256</width>
+              <height>192</height>
+             </rect>
+            </property>
+           </widget>
+           <widget class="QGraphicsView" name="graphicsView_tab_7">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>0</y>
+              <width>256</width>
+              <height>192</height>
+             </rect>
+            </property>
+           </widget>
           </widget>
           <widget class="QWidget" name="tab_8">
            <attribute name="title">
-            <string>ページ</string>
+            <string>8</string>
            </attribute>
+           <layout class="QGridLayout" name="gridLayout_8">
+            <item row="0" column="0">
+             <widget class="QGraphicsView" name="graphicsView_tab_8"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QTableView" name="tableView_tab8"/>
+            </item>
+           </layout>
           </widget>
           <widget class="QWidget" name="tab_9">
            <attribute name="title">
-            <string>ページ</string>
+            <string>9</string>
            </attribute>
+           <layout class="QGridLayout" name="gridLayout_9">
+            <item row="0" column="0">
+             <widget class="QGraphicsView" name="graphicsView_tab_9"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QTableView" name="tableView_tab_9"/>
+            </item>
+           </layout>
           </widget>
           <widget class="QWidget" name="tab_10">
            <attribute name="title">
-            <string>ページ</string>
+            <string>10</string>
            </attribute>
+           <layout class="QGridLayout" name="gridLayout_10">
+            <item row="0" column="0">
+             <widget class="QGraphicsView" name="graphicsView_tab_10"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QTableView" name="tableView_tab_10"/>
+            </item>
+           </layout>
           </widget>
           <widget class="QWidget" name="tab_11">
            <attribute name="title">
-            <string>ページ</string>
+            <string>12</string>
            </attribute>
           </widget>
           <widget class="QWidget" name="tab_12">
            <attribute name="title">
-            <string>ページ</string>
+            <string>13</string>
            </attribute>
           </widget>
          </widget>
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout">
-          <item>
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
           <item>
            <spacer name="horizontalSpacer_3">
             <property name="orientation">
@@ -302,7 +418,7 @@ QPushButton:hover {
 }</string>
             </property>
             <property name="text">
-             <string>close</string>
+             <string>CLOSE</string>
             </property>
             <property name="flat">
              <bool>false</bool>
@@ -322,7 +438,7 @@ QPushButton:hover {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1000</width>
+     <width>600</width>
      <height>22</height>
     </rect>
    </property>
@@ -354,12 +470,12 @@ QPushButton:hover {
    <slot>execute()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>150</x>
-     <y>702</y>
+     <x>161</x>
+     <y>411</y>
     </hint>
     <hint type="destinationlabel">
      <x>185</x>
-     <y>686</y>
+     <y>499</y>
     </hint>
    </hints>
   </connection>
@@ -370,12 +486,12 @@ QPushButton:hover {
    <slot>save_results()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>138</x>
-     <y>730</y>
+     <x>294</x>
+     <y>440</y>
     </hint>
     <hint type="destinationlabel">
      <x>208</x>
-     <y>718</y>
+     <y>499</y>
     </hint>
    </hints>
   </connection>
@@ -386,12 +502,28 @@ QPushButton:hover {
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>875</x>
-     <y>753</y>
+     <x>587</x>
+     <y>466</y>
     </hint>
     <hint type="destinationlabel">
-     <x>800</x>
-     <y>752</y>
+     <x>599</x>
+     <y>499</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow_for_ImageAnalysis</receiver>
+   <slot>view_diagram()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>136</x>
+     <y>421</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>4</x>
+     <y>415</y>
     </hint>
    </hints>
   </connection>
@@ -400,5 +532,6 @@ QPushButton:hover {
   <slot>select_directory()</slot>
   <slot>execute()</slot>
   <slot>save_results()</slot>
+  <slot>view_diagram()</slot>
  </slots>
 </ui>

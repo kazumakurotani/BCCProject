@@ -22,7 +22,7 @@ class ImageData:
         self.filepath = filepath
         self.name = self._get_filename(filepath)
         self.image_data = self._get_image_data(filepath)
-        self.size = self.data_file.shape[:2]
+        self.size = self._get_size(self.image_data)
 
         # 前処理後の画像
         self.image_preprocessed = self._preprocess_image(self.image_data)
@@ -81,7 +81,7 @@ class ImageData:
 
         return image_data
 
-    def _get_size(image_data: np.ndarray) -> Tuple[int, int]:
+    def _get_size(self, image_data: np.ndarray) -> Tuple[int, int]:
         """
         Extracts the size (height and width) of the image data.
 
@@ -106,11 +106,13 @@ class ImageData:
 
         return size
 
-    def _preprocess_image(image_data: np.ndarray,
-                          resize_dim: tuple = (144, 144),
-                          kernel_size: tuple = (3,3),
-                          sigma: int = 2
-                          ) -> np.ndarray:
+    def _preprocess_image(
+            self,
+            image_data: np.ndarray,
+            resize_dim: tuple = (144, 144),
+            kernel_size: tuple = (3,3),
+            sigma: int = 2
+        ) -> np.ndarray:
         """
         Preprocesses the image by resizing, converting to grayscale, noise reduction, and histogram equalization.
 
@@ -127,12 +129,9 @@ class ImageData:
         # スムージング (e.g., Gaussian Blur)
         image_smoothed = cv2.GaussianBlur(image_resized, kernel_size, sigma)
 
-        # ヒストグラム平坦化
-        image_equalized = cv2.equalizeHist(image_smoothed)
+        return image_smoothed
 
-        return image_equalized
-
-    def _convert_color_space(image_data: np.ndarray) -> Dict[str, np.ndarray]:
+    def _convert_color_space(self, image_data: np.ndarray) -> Dict[str, np.ndarray]:
         """
         Converts the given image data into various color spaces and stores them in a dictionary.
 
@@ -163,12 +162,14 @@ class ImageData:
             color_code = color_spaces[color_name]
             image_converted = cv2.cvtColor(image_data, color_code)
 
-            images_converted[color] = image_converted
+            images_converted[color_name] = image_converted
+
+        print(images_converted.keys())
 
         return images_converted
 
 
-    def _add_histogram_features(images_converted: Dict[str, np.ndarray]) -> Dict[str, np.ndarray]:
+    def _add_histogram_features(self, images_converted: Dict[str, np.ndarray]) -> Dict[str, np.ndarray]:
         """
         Calculate histograms for each color space provided in images_converted.
 

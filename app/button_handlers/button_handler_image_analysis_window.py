@@ -1,5 +1,6 @@
 from PyQt5 import QtWidgets
 import os
+from button_handlers import feature_analysis
 
 
 def select_directory(ImageAnalysisWindow):
@@ -48,12 +49,18 @@ def execute(ImageAnalysisWindow):
     path_dir = viewModel.filePath(selected_indexes[0])
     file_list = os.listdir(path_dir)
 
-    # 解析ファイルの読み込み
+    # 解析ファイルのパス取得
     list_path_file = []
     for f in file_list:
         path_file = os.path.join(path_dir, f)
         list_path_file.append(path_file)
 
+    # 画像情報の取得
+    ImageData = feature_analysis.FeatureAnalysis(list_path_file)
+    ImageData.get_histograms_histgram_features()
+
     # 解析の終了を通知
     message = "解析終了"
     ImageAnalysisWindow.statusbar.showMessage(message)
+
+
