@@ -57,10 +57,32 @@ def execute(ImageAnalysisWindow):
 
     # 画像情報の取得
     ImageData = feature_analysis.FeatureAnalysis(list_path_file)
-    ImageData.get_histograms_histgram_features()
+
+    # histgramの解析結果の抽出
+    data_histgram_featres = ImageData.get_diagrams_histgram_features()
+
 
     # 解析の終了を通知
     message = "解析終了"
     ImageAnalysisWindow.statusbar.showMessage(message)
 
+    #     # ヒストグラム画像を取得
+
+
+    #     # RGBヒストグラムを表示する例
+    #     self.labelHistogramRGB.setPixmap(self.convert_cv_qt(histogram_images['RGB']))
+
+    # def get_histogram_images(self):
+    #     # ヒストグラム画像を生成または読み込む関数
+    #     # ここに、前のステップで作成したヒストグラム画像を生成または読み込むコードを記述
+    #     pass
+
+    # def convert_cv_qt(self, cv_img):
+    #     """Convert from an opencv image to QPixmap"""
+    #     rgb_image = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
+    #     h, w, ch = rgb_image.shape
+    #     bytes_per_line = ch * w
+    #     convert_to_Qt_format = QtGui.QImage(rgb_image.data, w, h, bytes_per_line, QtGui.QImage.Format_RGB888)
+    #     p = convert_to_Qt_format.scaled(400, 400, QtCore.Qt.KeepAspectRatio)
+    #     return QtGui.QPixmap.fromImage(p)
 

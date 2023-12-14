@@ -23,7 +23,7 @@ class FeatureAnalysis:
 
         return dic_instance_image_data
 
-    def get_histograms_histgram_features(self):
+    def get_diagrams_histgram_features(self):
         """
         Plots histograms for each color space.
 
@@ -39,6 +39,7 @@ class FeatureAnalysis:
         images_histgram = {}
 
         for name_file in dict_histgrams.keys():
+
             for color_space, histgrams in dict_histgrams[name_file].items():
                 dict_images_histgrams = {}
                 diagram = plot_manager.PlotManager("histgram")
@@ -76,7 +77,7 @@ class FeatureAnalysis:
                         ax.hist(histgrams[i].ravel(), bins=256, alpha=0.7, label=f'{color}', density=True)
                     ax.legend()
 
-            # Save plot to a BytesIO buffer
+                # Save plot to a BytesIO buffer
                 buf = BytesIO()
                 plt.savefig(buf, format='png')
                 plt.close()
@@ -91,7 +92,6 @@ class FeatureAnalysis:
 
                 dict_images_histgrams[color_space] = img
 
-            images_histgram[name_file] = dict_histgrams
+            images_histgram[name_file] = dict_images_histgrams
 
         return images_histgram
-
