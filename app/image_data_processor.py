@@ -30,9 +30,9 @@ class ImageData:
 
         # 特徴量
         self.histgrams_features = self._add_histogram_features(self.image_converted)
-        # self.edge_features = self._add_edge_features(self.image_preprocessed)
-        # self.local_features = self._add_local_feature(self.image_preprocessed)
-        # self.glcm_features = self._add_glcm_features(self.image_preprocessed)
+        self.edge_features = self._add_edge_features(self.image_preprocessed)
+        self.local_features = self._add_local_feature(self.image_preprocessed)
+        self.glcm_features = self._add_glcm_features(self.image_preprocessed)
 
     def _get_filename(self, filepath: str) -> str:
         """
@@ -214,11 +214,15 @@ class ImageData:
             The function applies Sobel edge detection to find horizontal and vertical edges.
             It uses a kernel size of 3 for the Sobel operator.
         """
+        # 格納用変数
         edge_features = {}
 
+        # グレイスケールに変換
+        image_gray = cv2.cvtColor(image_data, cv2.COLOR_BGR2GRAY)
+
         # Sobel Edge Detection for horizontal and vertical edges
-        sobel_x = cv2.Sobel(image_data, cv2.CV_64F, 1, 0, ksize)
-        sobel_y = cv2.Sobel(image_data, cv2.CV_64F, 0, 1, ksize)
+        sobel_x = cv2.Sobel(image_gray, cv2.CV_64F, 1, 0, ksize)
+        sobel_y = cv2.Sobel(image_gray, cv2.CV_64F, 0, 1, ksize)
 
         edge_features["sobel_x"] = sobel_x
         edge_features["sobel_y"] = sobel_y
@@ -264,7 +268,7 @@ class ImageData:
 
         return local_features
 
-    def _add_glcm_features(image_data: np.ndarray) -> Dict[str, float]:
+    def _add_glcm_features(self, image_data: np.ndarray) -> Dict[str, float]:
         """
         Extracts Gray Level Co-occurrence Matrix (GLCM) features from the given image.
 

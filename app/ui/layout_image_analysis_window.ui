@@ -22,7 +22,7 @@ background-color: rgb(240, 240, 240);</string>
     <item row="0" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
          <widget class="QPushButton" name="pushButton_for_selectDirectory">
           <property name="sizePolicy">
@@ -107,34 +107,33 @@ QPushButton:hover {
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QPushButton" name="pushButton">
-            <property name="styleSheet">
-             <string notr="true">QPushButton {
-	font: 11pt &quot;Segoe UI&quot;;
-	font-weight: bold;
-	color: rgb(0, 0, 0);
-	background-color: rgb(255, 255, 255);
-	border: 1px solid rgb(0, 0, 0);
-	border-radius: 1px;
-}
-
-QPushButton:hover {
-	font: 75 11pt &quot;Segoe UI&quot;;
-	font-weight: bold;
-	color: rgb(85, 170, 255);
-	background-color: rgb(255, 255, 255);
-	border: 2px solid rgb(85, 170, 255);
-}</string>
-            </property>
-            <property name="text">
-             <string>view</string>
-            </property>
-           </widget>
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <item>
+             <widget class="QComboBox" name="comboBox_for_selectImage">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="comboBox_for_selectFeature">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_for_saveResults">
+           <widget class="QPushButton" name="pushButton_for_viewDiagram">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -158,7 +157,7 @@ QPushButton:hover {
 }</string>
             </property>
             <property name="text">
-             <string>save</string>
+             <string>  view  </string>
             </property>
            </widget>
           </item>
@@ -379,17 +378,35 @@ QPushButton:hover {
            </spacer>
           </item>
           <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+           <widget class="QPushButton" name="pushButton_for_saveResults">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
+            <property name="styleSheet">
+             <string notr="true">QPushButton {
+	font: 11pt &quot;Segoe UI&quot;;
+	font-weight: bold;
+	color: rgb(0, 0, 0);
+	background-color: rgb(255, 255, 255);
+	border: 1px solid rgb(0, 0, 0);
+	border-radius: 1px;
+}
+
+QPushButton:hover {
+	font: 75 11pt &quot;Segoe UI&quot;;
+	font-weight: bold;
+	color: rgb(85, 170, 255);
+	background-color: rgb(255, 255, 255);
+	border: 2px solid rgb(85, 170, 255);
+}</string>
             </property>
-           </spacer>
+            <property name="text">
+             <string>SAVE</string>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="QPushButton" name="pushButton_for_closeWindow">
@@ -470,8 +487,8 @@ QPushButton:hover {
    <slot>execute()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>161</x>
-     <y>411</y>
+     <x>172</x>
+     <y>389</y>
     </hint>
     <hint type="destinationlabel">
      <x>185</x>
@@ -486,8 +503,8 @@ QPushButton:hover {
    <slot>save_results()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>294</x>
-     <y>440</y>
+     <x>515</x>
+     <y>466</y>
     </hint>
     <hint type="destinationlabel">
      <x>208</x>
@@ -512,14 +529,14 @@ QPushButton:hover {
    </hints>
   </connection>
   <connection>
-   <sender>pushButton</sender>
+   <sender>pushButton_for_viewDiagram</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow_for_ImageAnalysis</receiver>
    <slot>view_diagram()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>136</x>
-     <y>421</y>
+     <x>294</x>
+     <y>440</y>
     </hint>
     <hint type="destinationlabel">
      <x>4</x>

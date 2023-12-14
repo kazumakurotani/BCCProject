@@ -1,7 +1,6 @@
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtGui, QtCore
 import os
 from button_handlers import feature_analysis
-
 
 def select_directory(ImageAnalysisWindow):
 
@@ -55,34 +54,71 @@ def execute(ImageAnalysisWindow):
         path_file = os.path.join(path_dir, f)
         list_path_file.append(path_file)
 
+    # コンボボックスの選択肢を追加
+    list_features = [
+        "histgrams_features",
+        "edge_features",
+        "local_features",
+        "glcm_features"
+    ]
+    ImageAnalysisWindow.comboBox_for_selectImage.addItems(file_list)
+    ImageAnalysisWindow.comboBox_for_selectFeature.addItems(list_features)
+
     # 画像情報の取得
-    ImageData = feature_analysis.FeatureAnalysis(list_path_file)
+    FA = feature_analysis.FeatureAnalysis(list_path_file)
 
-    # histgramの解析結果の抽出
-    data_histgram_featres = ImageData.get_diagrams_histgram_features()
+    # 図やグラフ，表のプロットデートを取得
+    data_plot = {}
 
+    data_diagrams_histgram_feature = FA.get_diagrams_histgram_features()
+    data_plot["diagrams_histgram_feature"] = data_diagrams_histgram_feature
+
+    ImageAnalysisWindow.data_plot = data_plot
 
     # 解析の終了を通知
     message = "解析終了"
     ImageAnalysisWindow.statusbar.showMessage(message)
 
-    #     # ヒストグラム画像を取得
+def view_diagram(ImageAnalysisWindow):
 
+    data_plot = ImageAnalysisWindow.data_plot
 
-    #     # RGBヒストグラムを表示する例
-    #     self.labelHistogramRGB.setPixmap(self.convert_cv_qt(histogram_images['RGB']))
+    if data_plot is None:
+        # 解析の終了を通知
+        message = "解析データが見つかりません．解析を実行してください．"
+        ImageAnalysisWindow.statusbar.showMessage(message)
 
-    # def get_histogram_images(self):
-    #     # ヒストグラム画像を生成または読み込む関数
-    #     # ここに、前のステップで作成したヒストグラム画像を生成または読み込むコードを記述
-    #     pass
+    # 各QGraphicsViewのアドレスを取得
+    number_of_views = 10
+    list_graphics_view = []
+    for i in range(1, number_of_views + 1):
+        list_graphics_view.append(getattr(ImageAnalysisWindow, f'graphicsView_tab_{i}'))
+    selected_image = ImageAnalysisWindow.comboBox_for_selectImage.currentText()
+    selected_feature = ImageAnalysisWindow.comboBox_for_selectFeature.currentText()
 
-    # def convert_cv_qt(self, cv_img):
-    #     """Convert from an opencv image to QPixmap"""
-    #     rgb_image = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
-    #     h, w, ch = rgb_image.shape
-    #     bytes_per_line = ch * w
-    #     convert_to_Qt_format = QtGui.QImage(rgb_image.data, w, h, bytes_per_line, QtGui.QImage.Format_RGB888)
-    #     p = convert_to_Qt_format.scaled(400, 400, QtCore.Qt.KeepAspectRatio)
-    #     return QtGui.QPixmap.fromImage(p)
+    if selected_feature == "histgrams_features":
+        selected_data = data_plot["diagrams_histgram_feature"]
+
+        feature_data = selected_data[selected_image]
+
+        for i, color in enumerate(feature_data.keys()):
+            data = feature_data[color]
+            view_gra = list_graphics_view[i]
+            _display_histogram(ImageAnalysisWindow, view_gra, data)
+
+def _display_histogram(ImageAnalysisWindow, graphics_view, cv_img):
+    """Display the histogram image in a QGraphicsView, scaled to fit the view."""
+    scene = QtWidgets.QGraphicsScene(ImageAnalysisWindow)
+
+    # Convert the OpenCV image to QPixmap
+    qimg = QtGui.QImage(cv_img.data, cv_img.shape[1], cv_img.shape[0], QtGui.QImage.Format_RGB888)
+    pixmap = QtGui.QPixmap.fromImage(qimg)
+
+    # Scale the pixmap to fit the QGraphicsView's size
+    scaled_pixmap = pixmap.scaled(graphics_view.width(), graphics_view.height(), QtCore.Qt.KeepAspectRatio)
+
+    # Add the scaled pixmap to the scene and set the scene to the view
+    scene.addPixmap(scaled_pixmap)
+    graphics_view.setScene(scene)
+
 

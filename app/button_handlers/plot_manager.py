@@ -39,7 +39,7 @@ class PlotManager:
             'ytick.direction': 'in',
 
             'savefig.dpi': 300,
-            'figure.figsize': [8, 6],
+            'figure.figsize': [6, 4],
 
             # 凡例設定
             'legend.fontsize': 12,

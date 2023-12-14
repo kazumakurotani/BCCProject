@@ -39,9 +39,8 @@ class FeatureAnalysis:
         images_histgram = {}
 
         for name_file in dict_histgrams.keys():
-
+            dict_images_histgrams = {}
             for color_space, histgrams in dict_histgrams[name_file].items():
-                dict_images_histgrams = {}
                 diagram = plot_manager.PlotManager("histgram")
                 ax = diagram.fig.add_subplot(111)
                 diagram.set_title_and_labels(
@@ -51,30 +50,35 @@ class FeatureAnalysis:
 
                 # グレースケールの場合
                 if color_space == 'GRAY':
-                    ax.hist(histgrams.ravel(), bins=256, color='black', alpha=0.7, density=True)
+                    hist = np.array(histgrams.ravel(), np.uint64)
+                    ax.plot(hist, color='black')
 
                 elif color_space == 'RGB':
-                    colors = ['blue', 'green', 'red']
-                    for i, color in enumerate(colors):
-                        ax.hist(histgrams[i].ravel(), bins=256, color=color, alpha=0.7, label=f'{color}', density=True)
+                    colors = {'red': "r", 'green': "g", 'blue':"b"}
+                    for i, color in enumerate(colors.keys()):
+                        hist = np.array(histgrams[i].ravel(), np.uint64)
+                        ax.plot(hist, color=colors[color], label=f'{color}')
                     ax.legend()
 
                 elif color_space == 'HSV':
                     colors = ['hue', 'saturation', 'value']
                     for i, color in enumerate(colors):
-                        ax.hist(histgrams[i].ravel(), bins=256, alpha=0.7, label=f'{color}', density=True)
+                        hist = np.array(histgrams[i].ravel(), np.uint64)
+                        ax.plot(hist, label=f'{color}')
                     ax.legend()
 
                 elif color_space == 'YCrCb':
                     colors = ['Y', 'Cr', 'Cb']
                     for i, color in enumerate(colors):
-                        ax.hist(histgrams[i].ravel(), bins=256, alpha=0.7, label=f'{color}', density=True)
+                        hist = np.array(histgrams[i].ravel(), np.uint64)
+                        ax.plot(hist, label=f'{color}')
                     ax.legend()
 
                 elif color_space == 'Lab':
                     colors = ['L', 'a', 'b']
                     for i, color in enumerate(colors):
-                        ax.hist(histgrams[i].ravel(), bins=256, alpha=0.7, label=f'{color}', density=True)
+                        hist = np.array(histgrams[i].ravel(), np.uint64)
+                        ax.plot(hist, label=f'{color}')
                     ax.legend()
 
                 # Save plot to a BytesIO buffer
