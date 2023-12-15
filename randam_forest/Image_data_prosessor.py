@@ -7,7 +7,7 @@ import numpy as np
 
 class ImageData:
     """
-    画像の特徴と情報を機械学習用途で管理するクラス。
+    画像の情報を機械学習用途で管理するクラス。
     """
 
     def __init__(self, filepath: str) -> None:

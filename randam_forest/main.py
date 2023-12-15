@@ -13,7 +13,8 @@ class RandamForest:
         dir_path_dataset = "D:\\github\\BCCProject\\app\\dataset"
 
         self.dict_image_data = self.get_dict_image_data(dir_path_dataset) # ImageDataインスタンスを格納した辞書
-        self.dict_features = {} # ImageFeaturesインスタンスを格納した辞書
+        self.dict_features = self.get_dict_features() # ImageFeaturesインスタンスを格納した辞書
+        self.feature_matrix = None
 
     def get_dict_image_data(self, root_dir: str) -> Dict[str, isinstance]:
         """
@@ -62,6 +63,9 @@ class RandamForest:
                     image_paths.append(full_path)
 
         return image_paths
+
+    def get_dict_features(self):
+        pass
 
 
     def main(self):
