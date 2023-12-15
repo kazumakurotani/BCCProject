@@ -70,8 +70,9 @@ def execute(ImageAnalysisWindow):
     # 図やグラフ，表のプロットデートを取得
     data_plot = {}
 
-    data_diagrams_histgram_feature = FA.get_diagrams_histgram_features()
-    data_plot["diagrams_histgram_feature"] = data_diagrams_histgram_feature
+    # data_diagrams_histgram_feature = FA.get_diagrams_histgram_features()
+    data_diagrams_local_features = FA.get_diagrams_local_feature()
+    # data_plot["diagrams_histgram_feature"] = data_diagrams_histgram_feature
 
     ImageAnalysisWindow.data_plot = data_plot
 
@@ -120,5 +121,3 @@ def _display_histogram(ImageAnalysisWindow, graphics_view, cv_img):
     # Add the scaled pixmap to the scene and set the scene to the view
     scene.addPixmap(scaled_pixmap)
     graphics_view.setScene(scene)
-
-

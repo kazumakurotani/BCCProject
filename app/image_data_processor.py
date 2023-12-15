@@ -5,6 +5,8 @@ import cv2
 import numpy as np
 from skimage import color, feature
 
+import matplotlib.pylab as plt
+
 
 class ImageData:
     """
@@ -32,7 +34,7 @@ class ImageData:
         self.histgrams_features = self._add_histogram_features(self.image_converted)
         self.edge_features = self._add_edge_features(self.image_preprocessed)
         self.local_features = self._add_local_feature(self.image_preprocessed)
-        self.glcm_features = self._add_glcm_features(self.image_preprocessed)
+        # self.glcm_features = self._add_glcm_features(self.image_preprocessed)
 
     def _get_filename(self, filepath: str) -> str:
         """
@@ -246,13 +248,65 @@ class ImageData:
         """
         local_features = {}
 
-        # Convert image to grayscale as HOG and SIFT require grayscale images
+        # グレースケールに変換
         gray_image = cv2.cvtColor(image_data, cv2.COLOR_BGR2GRAY)
 
-        # HOG Feature Extraction
-        hog = cv2.HOGDescriptor()
-        h = hog.compute(gray_image)
-        local_features["HOG"] = h
+        features, hog_img = feature.hog(gray_image, orientations=8, pixels_per_cell=(16, 16),
+                                        cells_per_block=(1, 1), visualize=True)
+        # matplotlib で表示する。
+        plt.figure(figsize=(10, 10))
+        plt.imshow(hog_img, cmap='inferno')
+        plt.axis('off')
+        plt.show()
+        plt.savefig('result.png')
+
+        # HOGディスクリプタの設定
+        cell_size = (8, 8)
+        block_size = (2, 2)
+        nbins = 9
+        hog = cv2.HOGDescriptor(_winSize=(gray_image.shape[1] // cell_size[1] * cell_size[1],
+                                        gray_image.shape[0] // cell_size[0] * cell_size[0]),
+                                _blockSize=(block_size[1] * cell_size[1],
+                                            block_size[0] * cell_size[0]),
+                                _blockStride=(cell_size[1], cell_size[0]),
+                                _cellSize=(cell_size[1], cell_size[0]),
+                                _nbins=nbins)
+
+        # HOG特徴量の計算
+        hog_features = hog.compute(gray_image)
+
+        # HOG特徴量を画像サイズにリシェイプ
+        n_cells = (gray_image.shape[0] // cell_size[0], gray_image.shape[1] // cell_size[1])
+        hog_features = hog_features.reshape(n_cells[1] - block_size[1] + 1,
+                                            n_cells[0] - block_size[0] + 1,
+                                            block_size[0], block_size[1], nbins).transpose((1, 0, 2, 3, 4))
+
+        # HOG特徴量の方向と大きさを表す線分を描画
+        hog_image = np.zeros_like(gray_image)
+        for i in range(n_cells[0] - block_size[0] + 1):
+            for j in range(n_cells[1] - block_size[1] + 1):
+                cell_grad = hog_features[i, j, :, :, :]
+                cell_grad = cell_grad.transpose((2, 0, 1))
+                cell_grad = cell_grad.reshape(-1, nbins)
+                max_mag = np.array(cell_grad).max(axis=0)
+                ang = np.arange(0, nbins) * (180 / nbins)
+                ang_rad = ang * np.pi / 180
+                x, y = np.cos(ang_rad) * max_mag, np.sin(ang_rad) * max_mag
+                x += j * cell_size[1]
+                y += i * cell_size[0]
+                for k in range(nbins):
+                    pt1 = (int(x[k]), int(y[k]))
+                    pt2 = (int(x[k] - np.cos(ang_rad[k]) * max_mag[k]),
+                        int(y[k] - np.sin(ang_rad[k]) * max_mag[k]))
+                    cv2.line(hog_image, pt1, pt2, int(255 * (k / nbins)))
+
+        plt.imshow(hog_image, cmap='gray')
+        plt.title('HOG features')
+        plt.axis('off')
+        plt.show()
+
+
+        local_features["HOG"] = hog_features
 
         # SIFT Feature Extraction
         sift = cv2.SIFT_create()
