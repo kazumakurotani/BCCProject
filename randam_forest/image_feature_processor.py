@@ -1,12 +1,13 @@
 import cv2
 import numpy as np
+from typing import Dict
 
 
 class FeatureData:
     """
     画像の特徴を機械学習用途で管理するクラス。
     """
-    def __init__(self, filepath: str) -> None:
+    def __init__(self, image: np.ndarray) -> None:
         """
         特徴情報を保持するクラス。
 
@@ -14,38 +15,87 @@ class FeatureData:
             filepath (str): 画像ファイルのパス。
         """
         # 特徴情報
-        self.image_preprocessed = None
+        self.image_preprocessed = self.preprocessed(image)
+        self.image_gray = self.convert_gray(self.image_preprocessed)
+        self.color_histgram_features = self.get_color_histgrams(self.image_preprocessed)
 
-    def preprocessed(self, ImageData):
+    def preprocessed(self, image: np.ndarray) -> np.ndarray:
+        """
+        画像に対してガウシアンブラーによる平滑化とリサイズを行う。
+
+        ガウシアンフィルタを適用して画像を平滑化し、指定されたサイズにリサイズする。
+
+        Args:
+            image (np.ndarray): 処理する画像。BGRカラースペースであることが想定される。
+
+        Returns:
+            np.ndarray: 平滑化およびリサイズされた画像。
+        """
+        # パラメータの設定
+        size_resize = (64, 64)
+        kernel_size_smooth = (3, 3)
+        sigma_smooth = 2
+
+        # 画像の前処理: ガウシアンブラーによる平滑化、リサイズ
+        smoothed_image = cv2.GaussianBlur(image, kernel_size_smooth, sigma_smooth)
+        resized_image = cv2.resize(smoothed_image, size_resize)
+
+        return resized_image
 
 
-    def extract_features(image_data):
-        # 引数から画像データを取得
-        image = image_data.image_data
+    def convert_gray(self, image: np.ndarray) -> np.ndarray:
+        """
+        画像をグレースケールに変換する。
 
-        # 画像の前処理：リサイズと平滑化
-        resized_image = cv2.resize(image, (300, 300))  # 任意のサイズにリサイズ
-        smoothed_image = cv2.GaussianBlur(resized_image, (5, 5), 0)  # ガウシアンブラーを適用
+        BGRカラースペースの画像をグレースケールに変換する。
 
-        # 生画像をグレースケールに変換
-        gray_image = cv2.cvtColor(smoothed_image, cv2.COLOR_BGR2GRAY)
+        Args:
+            image (np.ndarray): グレースケールに変換する画像。BGRカラースペースであることが想定される。
 
-        # ヒストグラムを抽出：GRAY，R，G，B，H，S，V
-        gray_histogram = cv2.calcHist([gray_image], [0], None, [256], [0, 256])  # GRAYヒストグラム
-        b_histogram = cv2.calcHist([smoothed_image], [0], None, [256], [0, 256])  # Bヒストグラム
-        g_histogram = cv2.calcHist([smoothed_image], [1], None, [256], [0, 256])  # Gヒストグラム
-        r_histogram = cv2.calcHist([smoothed_image], [2], None, [256], [0, 256])  # Rヒストグラム
+        Returns:
+            np.ndarray: グレースケールに変換された画像。
+        """
+        return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-        hsv_image = cv2.cvtColor(smoothed_image, cv2.COLOR_BGR2HSV)
-        h_histogram = cv2.calcHist([hsv_image], [0], None, [256], [0, 256])  # Hヒストグラム
-        s_histogram = cv2.calcHist([hsv_image], [1], None, [256], [0, 256])  # Sヒストグラム
-        v_histogram = cv2.calcHist([hsv_image], [2], None, [256], [0, 256])  # Vヒストグラム
 
-        # 各特徴量の情報を記録するためのコメント
-        # 0: GRAYヒストグラム, 1: Bヒストグラム, 2: Gヒストグラム, 3: Rヒストグラム
-        # 4: Hヒストグラム, 5: Sヒストグラム, 6: Vヒストグラム
+    def get_color_histgrams(self, image: np.ndarray) -> Dict[str, np.ndarray]:
+        """
+        画像からGRAY, RGB, HSVカラースペースのヒストグラムを抽出し、
+        それらを辞書に格納して返す。
 
-        # 特徴行列を作成
-        feature_matrix = np.hstack([gray_histogram, b_histogram, g_histogram, r_histogram, h_histogram, s_histogram, v_histogram])
+        Args:
+            image (np.ndarray): cv2.imreadで読み込まれた画像データ。
 
-        return feature_matrix
+        Returns:
+            Dict[str, np.ndarray]: 各色空間のヒストグラムを含む辞書。
+        """
+        # グレースケールに変換
+        gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+        # ヒストグラム
+        bins = 64
+
+        # ヒストグラムの抽出
+        gray_histogram = cv2.calcHist([gray_image], [0], None, [bins], [0, 256]).flatten()
+        b_histogram = cv2.calcHist([image], [0], None, [bins], [0, 256]).flatten()
+        g_histogram = cv2.calcHist([image], [1], None, [bins], [0, 256]).flatten()
+        r_histogram = cv2.calcHist([image], [2], None, [bins], [0, 256]).flatten()
+
+        # HSVに変換してヒストグラムの抽出
+        hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        h_histogram = cv2.calcHist([hsv_image], [0], None, [bins], [0, 256]).flatten()
+        s_histogram = cv2.calcHist([hsv_image], [1], None, [bins], [0, 256]).flatten()
+        v_histogram = cv2.calcHist([hsv_image], [2], None, [bins], [0, 256]).flatten()
+
+        # 辞書にヒストグラムを格納
+        color_histogram_features = {
+            "gray": gray_histogram,
+            "blue": b_histogram,
+            "green": g_histogram,
+            "red": r_histogram,
+            "hue": h_histogram,
+            "saturation": s_histogram,
+            "value": v_histogram
+        }
+
+        return color_histogram_features
