@@ -1,11 +1,17 @@
 import os
 from typing import Dict, List
-from tqdm import tqdm
 
 import image_data_prosessor
 import image_feature_processor
-
 import numpy as np
+from sklearn.preprocessing import LabelEncoder
+from tqdm import tqdm
+
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, accuracy_score
+
+import matplotlib.pylab as plt
 
 
 class RandamForest:
@@ -13,18 +19,26 @@ class RandamForest:
     def __init__(self) -> None:
 
         # 設定値
-        # dir_path_dataset_desktop = "D:\\github\\BCCProject\\app\\dataset"
-        dir_path_dataset_laptop = "C:\\GitHub\\BCCProject\\app\\dataset"
+        self.dir_path_dataset_desktop = "D:\\github\\BCCProject\\app\\dataset" # 学校のパソコン用のパス
+        self.dir_path_dataset_laptop = "C:\\GitHub\\BCCProject\\app\\dataset" # ノートパソコン用のパス
 
-        self.dict_image_data, self.list_file_name = self.get_dict_image_data(dir_path_dataset_laptop) # ImageDataインスタンスを格納した辞書
-        self.dict_features = self.get_dict_features() # ImageFeaturesインスタンスを格納した辞書
-        self.feature_matrix = None
-        self.feature_check_dict = {}
+        # 画像データ，特徴
+        self.dict_image_data = None # ImageDataインスタンスを格納した辞書
+        self.dict_features = None # ImageFeaturesインスタンスを格納した辞書
+
+        self.labels = None # 正解ラベル
+        self.feature_matrix = None # 特徴行列
+        self.feature_check_dict = {} # 特徴行列の確認
 
         # フラグ
         self.is_first_call = True
+        self.is_laptop_or_desktop = 1 # 1:laptop, 2:desktop
 
-    def get_dict_image_data(self, root_dir: str) -> Dict[str, isinstance]:
+        # 関数の実行
+        self.get_dict_image_data()
+        self.get_dict_features()
+
+    def get_dict_image_data(self) -> Dict[str, isinstance]:
         """
         データセットのルートディレクトリからすべての画像ファイルのパスを取得し、
         それらのパスに対してImageDataのインスタンスを生成して辞書として返す。
@@ -35,6 +49,8 @@ class RandamForest:
         Returns:
             Dict[str, ImageData]: 各画像ファイルのパスをキーとするImageDataインスタンスの辞書。
         """
+        root_dir = self._check_device()
+
         image_paths = self._get_image_file_paths(root_dir)
 
         # 格納用変数
@@ -50,7 +66,15 @@ class RandamForest:
             except Exception as e:
                 print(f"画像ファイルの処理中にエラーが発生しました: {path}. エラー: {e}")
 
-        return dict_image_data, list_file_name
+        # インスタンスに代入
+        self.dict_image_data, self.list_file_name = dict_image_data, list_file_name
+
+    def _check_device(self):
+        # 使用デバイスの確認
+        if self.is_laptop_or_desktop == 1:
+            return self.dir_path_dataset_laptop
+        elif self.is_laptop_or_desktop == 2:
+            return self.dir_path_dataset_desktop
 
     def _get_image_file_paths(self, root_dir: str) -> List[str]:
         """
@@ -65,9 +89,11 @@ class RandamForest:
         Raises:
             ValueError: ルートディレクトリが存在しない、またはディレクトリではない場合に発生。
         """
+        # パスが有効化の確認
         if not os.path.exists(root_dir) or not os.path.isdir(root_dir):
             raise ValueError(f"指定されたルートディレクトリは存在しないか、ディレクトリではありません: {root_dir}")
 
+        # 画像のファイルパスの取得
         image_paths = []
         for subdir, _, files in os.walk(root_dir):
             for file in files:
@@ -90,7 +116,7 @@ class RandamForest:
             except Exception as e:
                 print(f"画像ファイルの処理中にエラーが発生しました: {file_name}. エラー: {e}")
 
-        return dict_features
+        self.dict_features = dict_features
 
     def make_feature_matrix(self, feature_matrix, features):
         """
@@ -105,18 +131,18 @@ class RandamForest:
         """
         # 格納用変数
         combined_features = None
-        feature_check_dict = {}
 
         # 使用特徴量のリスト作成
         features_dict = {
-            "image_gray": features.image_gray,
-            "gray_histogram": features.gray_histogram,
-            "blue_histogram": features.blue_histogram,
-            "green_histogram": features.green_histogram,
-            "red_histogram": features.red_histogram,
-            "hue_histogram": features.hue_histogram,
-            "saturation_histogram": features.saturation_histogram,
-            "value_histogram": features.value_histogram
+            # "image_gray": features.image_gray,
+            "image_saturation": features.image_saturation,
+            # "gray_histogram": features.gray_histogram,
+            # "blue_histogram": features.blue_histogram,
+            # "green_histogram": features.green_histogram,
+            # "red_histogram": features.red_histogram,
+            # "hue_histogram": features.hue_histogram,
+            # "saturation_histogram": features.saturation_histogram,
+            # "value_histogram": features.value_histogram
         }
 
         # 特徴量の結合
@@ -140,18 +166,58 @@ class RandamForest:
         return feature_matrix
 
     def main(self):
-        for file_name in tqdm(self.list_file_name, desc="Making Feature Matrix"):
+
+        # 目的変数の生成
+        labels = []
+        for file_name in tqdm(self.list_file_name, desc="Making labels"):
             # 必要なデータを呼び出す
             image_data = self.dict_image_data[file_name]
+            label = image_data.label
+
+            labels.append(label)
+
+        # ラベルエンコーダの初期化と変換
+        label_encoder = LabelEncoder()
+        self.labels = label_encoder.fit_transform(labels)
+
+        # 特徴行列の生成
+        for file_name in tqdm(self.list_file_name, desc="Making Feature Matrix"):
+            # 必要なデータを呼び出す
             features = self.dict_features[file_name]
 
-            # 特徴行列の作成
             self.feature_matrix = self.make_feature_matrix(self.feature_matrix, features)
 
         # 特徴量の情報の表示
         print(sum(self.feature_check_dict.values()))
 
-        pass
+        # feature_matrix は特徴量行列、labels は正解ラベル
+        X_train, X_test, y_train, y_test = train_test_split(self.feature_matrix,
+                                                            self.labels,
+                                                            test_size=0.2,
+                                                            random_state=42)
+
+        rf_classifier = RandomForestClassifier(n_estimators=100, random_state=42)
+        rf_classifier.fit(X_train, y_train)
+
+        # テストデータで予測
+        y_pred = rf_classifier.predict(X_test)
+
+        # 評価
+        print("Accuracy:", accuracy_score(y_test, y_pred))
+        print("\nClassification Report:\n", classification_report(y_test, y_pred))
+
+        # 特徴量の重要度を取得
+        importances = rf_classifier.feature_importances_
+
+        # 画像サイズに重要度をリシェイプ
+        importance_map = importances.reshape((128, 128))
+
+        # ヒートマップの表示
+        plt.imshow(importance_map, cmap='hot', interpolation='nearest')
+        plt.colorbar()
+        plt.title("Feature Importances Map")
+        plt.show()
+
 
 if __name__ == "__main__":
     rf = RandamForest()
