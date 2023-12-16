@@ -14,10 +14,21 @@ class FeatureData:
         Args:
             filepath (str): 画像ファイルのパス。
         """
-        # 特徴情報
-        self.image_preprocessed = self.preprocessed(image)
-        self.image_gray = self.convert_gray(self.image_preprocessed)
-        self.color_histgram_features = self.get_color_histgrams(self.image_preprocessed)
+        # 格納用変数
+        self.image_preprocessed = None
+        self.image_gray = None
+        self.gray_histogram = None
+        self.blue_histogram = None
+        self.green_histogram = None
+        self.red_histogram = None
+        self.hue_histogram = None
+        self.saturation_histogram = None
+        self.value_histogram = None
+
+        # 特徴抽出
+        self.preprocessed(image)
+        self.get_image_gray(self.image_preprocessed)
+        self.get_color_histgrams(self.image_preprocessed)
 
     def preprocessed(self, image: np.ndarray) -> np.ndarray:
         """
@@ -40,10 +51,11 @@ class FeatureData:
         smoothed_image = cv2.GaussianBlur(image, kernel_size_smooth, sigma_smooth)
         resized_image = cv2.resize(smoothed_image, size_resize)
 
-        return resized_image
+        # 変数に代入
+        self.image_preprocessed = resized_image
 
 
-    def convert_gray(self, image: np.ndarray) -> np.ndarray:
+    def get_image_gray(self, image: np.ndarray) -> np.ndarray:
         """
         画像をグレースケールに変換する。
 
@@ -55,7 +67,7 @@ class FeatureData:
         Returns:
             np.ndarray: グレースケールに変換された画像。
         """
-        return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        self.image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 
     def get_color_histgrams(self, image: np.ndarray) -> Dict[str, np.ndarray]:
@@ -71,31 +83,18 @@ class FeatureData:
         """
         # グレースケールに変換
         gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
-        # ヒストグラム
+        # パラメータ
         bins = 64
 
         # ヒストグラムの抽出
-        gray_histogram = cv2.calcHist([gray_image], [0], None, [bins], [0, 256]).flatten()
-        b_histogram = cv2.calcHist([image], [0], None, [bins], [0, 256]).flatten()
-        g_histogram = cv2.calcHist([image], [1], None, [bins], [0, 256]).flatten()
-        r_histogram = cv2.calcHist([image], [2], None, [bins], [0, 256]).flatten()
+        self.gray_histogram = cv2.calcHist([gray_image], [0], None, [bins], [0, 256])
+        self.blue_histogram = cv2.calcHist([image], [0], None, [bins], [0, 256])
+        self.green_histogram = cv2.calcHist([image], [1], None, [bins], [0, 256])
+        self.red_histogram = cv2.calcHist([image], [2], None, [bins], [0, 256])
 
         # HSVに変換してヒストグラムの抽出
-        hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-        h_histogram = cv2.calcHist([hsv_image], [0], None, [bins], [0, 256]).flatten()
-        s_histogram = cv2.calcHist([hsv_image], [1], None, [bins], [0, 256]).flatten()
-        v_histogram = cv2.calcHist([hsv_image], [2], None, [bins], [0, 256]).flatten()
-
-        # 辞書にヒストグラムを格納
-        color_histogram_features = {
-            "gray": gray_histogram,
-            "blue": b_histogram,
-            "green": g_histogram,
-            "red": r_histogram,
-            "hue": h_histogram,
-            "saturation": s_histogram,
-            "value": v_histogram
-        }
-
-        return color_histogram_features
+        self.hue_histogram = cv2.calcHist([hsv_image], [0], None, [bins], [0, 256])
+        self.saturation_histogram = cv2.calcHist([hsv_image], [1], None, [bins], [0, 256])
+        self.value_histogram = cv2.calcHist([hsv_image], [2], None, [bins], [0, 256])
