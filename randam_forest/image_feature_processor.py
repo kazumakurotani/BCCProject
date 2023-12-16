@@ -9,7 +9,7 @@ class FeatureData:
     """
     def __init__(self, image: np.ndarray) -> None:
         """
-        特徴情報を保持するクラス。
+        FeatureDataの初期化.
 
         Args:
             filepath (str): 画像ファイルのパス。

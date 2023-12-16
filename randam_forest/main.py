@@ -11,7 +11,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, accuracy_score
 
-import matplotlib.pylab as plt
+# import matplotlib.pylab as plt
 
 
 class RandamForest:
@@ -29,10 +29,6 @@ class RandamForest:
         self.labels = None # 正解ラベル
         self.feature_matrix = None # 特徴行列
         self.feature_check_dict = {} # 特徴行列の確認
-
-        # フラグ
-        self.is_first_call = True
-        self.is_laptop_or_desktop = 1 # 1:laptop, 2:desktop
 
         # 関数の実行
         self.get_dict_image_data()
@@ -134,15 +130,15 @@ class RandamForest:
 
         # 使用特徴量のリスト作成
         features_dict = {
-            # "image_gray": features.image_gray,
+            "image_gray": features.image_gray,
             "image_saturation": features.image_saturation,
-            # "gray_histogram": features.gray_histogram,
-            # "blue_histogram": features.blue_histogram,
-            # "green_histogram": features.green_histogram,
-            # "red_histogram": features.red_histogram,
-            # "hue_histogram": features.hue_histogram,
-            # "saturation_histogram": features.saturation_histogram,
-            # "value_histogram": features.value_histogram
+            "gray_histogram": features.gray_histogram,
+            "blue_histogram": features.blue_histogram,
+            "green_histogram": features.green_histogram,
+            "red_histogram": features.red_histogram,
+            "hue_histogram": features.hue_histogram,
+            "saturation_histogram": features.saturation_histogram,
+            "value_histogram": features.value_histogram
         }
 
         # 特徴量の結合
@@ -206,17 +202,17 @@ class RandamForest:
         print("Accuracy:", accuracy_score(y_test, y_pred))
         print("\nClassification Report:\n", classification_report(y_test, y_pred))
 
-        # 特徴量の重要度を取得
-        importances = rf_classifier.feature_importances_
+        # # 特徴量の重要度を取得
+        # importances = rf_classifier.feature_importances_
 
-        # 画像サイズに重要度をリシェイプ
-        importance_map = importances.reshape((128, 128))
+        # # 画像サイズに重要度をリシェイプ
+        # importance_map = importances.reshape((128, 128))
 
-        # ヒートマップの表示
-        plt.imshow(importance_map, cmap='hot', interpolation='nearest')
-        plt.colorbar()
-        plt.title("Feature Importances Map")
-        plt.show()
+        # # ヒートマップの表示
+        # plt.imshow(importance_map, cmap='hot', interpolation='nearest')
+        # plt.colorbar()
+        # plt.title("Feature Importances Map")
+        # plt.show()
 
 
 if __name__ == "__main__":
